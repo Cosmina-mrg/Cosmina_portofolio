@@ -24,7 +24,7 @@ DESCRIBE world_life_expectancy_staging;
 -- Before diving into analysis, it's crucial to clean the data. 
 -- This includes findind duplicates, handling missing values and ensuring consistency across the dataset.
 
-					-- 1. Finding the duplicates
+	-- 1. Finding the duplicates
 -- Count the Country and Year to see if there are duplicates
 SELECT Country, YEAR, CONCAT(Country, Year), COUNT(CONCAT(Country, Year))
 FROM world_life_expectancy_staging
@@ -47,7 +47,7 @@ Row_ID IN ( SELECT Row_ID
 		FROM world_life_expectancy_staging ) AS Row_table
             WHERE row_num > 1) ;
 
-			-- Handling missing values	
+	-- 2. Handling missing values	
 -- Select the blank rows from Status
 SELECT *
 FROM world_life_expectancy_staging
