@@ -149,7 +149,7 @@ SELECT *
 FROM world_life_expectancy_staging;
 
 
-		
+	
 
 			-- B.EXPLORATORY DATA ANALYSIS
 SELECT *
@@ -161,7 +161,7 @@ FROM world_life_expectancy_staging
 WHERE `Life expectancy` <> 0
 GROUP BY Year
 ORDER BY Year;  
-	## Based on the trend observed, the average life expectancy increased over a 15 years period.
+## Based on the trend observed, the average life expectancy increased over a 15 years period.
 
 -- How life expectancy increase over 15 years?
 SELECT Country, 
@@ -172,9 +172,9 @@ FROM world_life_expectancy_staging
 GROUP BY Country
 HAVING MIN(`Life expectancy`) <> 0
 AND MAX(`Life expectancy`) <> 0
-ORDER BY life_increase_15_years DESC; 
-	## When the minimum life expectancy is low, the potential for significant improvement is greater, leading to a larger increase over time.
-	## In contrast, when life expectancy is already high, gains tend to be smaller due to biological and medical limitations.
+ORDER BY life_increase_15_years DESC;  
+	-- When the minimum life expectancy is low, the potential for significant improvement is greater, leading to a larger increase over time. 
+	-- In contrast, when life expectancy is already high, gains tend to be smaller due to biological and medical limitations.
 
 
 -- Life expectancy vs GDP
@@ -192,10 +192,10 @@ AVG(CASE WHEN gdp >= 1500 THEN `Life expectancy` ELSE NULL END) high_gdp_Life_ex
 SUM(CASE WHEN gdp <= 1500 THEN 1 ELSE 0  END) low_gdp_count,
 AVG(CASE WHEN gdp <= 1500 THEN `Life expectancy` ELSE NULL END) low_gdp_Life_expectancy
 FROM world_life_expectancy_staging;
-	## As we can observe, countries with a high GDP have a life expectancy approximately 10 years higher compared to those with a low GDP.
+	-- As we can observe, countries with a high GDP have a life expectancy approximately 10 years higher compared to those with a low GDP.
 
 
--- Corelation between status si life expectancy
+-- Corelation between status and life expectancy
 SELECT Status, ROUND(AVG(`Life expectancy`),1)
 FROM world_life_expectancy_staging
 GROUP BY Status;
@@ -204,8 +204,8 @@ GROUP BY Status;
 SELECT Status, COUNT(DISTINCT Country), ROUND(AVG(`Life expectancy`),1)
 FROM world_life_expectancy_staging
 GROUP BY Status;
-	## The group of developing countries is more than five times larger, meaning it includes states with highly diverse levels of economic development.
-        ## Some developed countries have small populations, but strong economies, which can increase the average life expectancy.
+	-- The group of developing countries is more than five times larger, meaning it includes states with highly diverse levels of economic development.
+	-- Some developed countries have small populations, but strong economies, which can increase the average life expectancy.
         
         
 -- Life expectancy vs BMI
@@ -214,17 +214,37 @@ FROM world_life_expectancy_staging
 GROUP BY Country
 HAVING life_exp > 0
 AND BMI > 0
-ORDER BY BMI DESC ;        
+ORDER BY BMI DESC ;  
+	-- Higher BMI categories (overweight and obese) are associated with increased risks of various health issues 
+	--  This anaysis shown that populations with higher average BMI tend to have lower life expectancies     
         
+
+-- Life expectancy vs Schooling
+SELECT Country, ROUND(AVG(`Life expectancy`),1) AS life_exp, ROUND(AVG(`Schooling`),1) AS Schooling
+FROM world_life_expectancy_staging
+GROUP BY Country
+HAVING life_exp > 0
+AND Schooling > 0
+ORDER BY life_exp; 
+	-- Education positively influences life expectancy by improving health literacy, access to healthcare, and promoting healthier behaviors
+	-- In developed countries, there tends to be a clear correlation between higher education and longer life expectancy. 
+	-- In developing countries, improving access to education is essential for increasing life expectancy.
+	-- We can see that, for Africa, achieving above-average figures for years of schooling has been a persistent challenge. 
         
  -- Rolling Total for Adult Mortality      
 SELECT Country, Year, `Life expectancy`, `Adult Mortality`,
 SUM(`Adult Mortality`)OVER(PARTITION BY Country ORDER BY Year) AS rolling_total
 FROM world_life_expectancy_staging
-WHERE Country LIKE '%United%';     ## Countries with low life expectancy have a higher adult mortality rate compared to those with high life expectancy.
+ORDER BY rolling_total DESC ;   
+	-- Countries with low life expectancy have a higher adult mortality rate compared to those with high life expectancy.
+	-- Lesotho had the highest adult mortality rates in the world. 
+	-- Zimbabwe, Botswana, Malawi & Côte d'Ivoire complete the top five countries with the highest mortality rates
         
 -- Rolling Total for Infant deaths   
 SELECT Country, Year, `Life expectancy`, `infant deaths`,
 SUM(`infant deaths`)OVER(PARTITION BY Country ORDER BY Year) AS rolling_total
 FROM world_life_expectancy_staging
-WHERE Country LIKE '%United%';    ##Countries with low life expectancy have a higher number of infant deaths compared to those with high life expectancy.
+ORDER BY rolling_total DESC;   
+	 -- Countries with low life expectancy have a higher number of infant deaths compared to those with high life expectancy.
+	 -- India stands in top in this alarming statistic, recording over 21,000 infant deaths over the 15-year period examined. 
+	 -- Close behind are Nigeria, Pakistan,  China and the Democratic Republic of the Congo in this tragic count.
