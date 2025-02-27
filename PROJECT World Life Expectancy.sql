@@ -1,4 +1,4 @@
-									-- WORLD LIFE EXPECTANCY PROJECT
+		-- WORLD LIFE EXPECTANCY PROJECT
 
 SELECT *
 FROM world_life_expectancy;
@@ -41,17 +41,13 @@ WHERE row_num > 1;
 -- Delete the duplicates
 DELETE FROM world_life_expectancy_staging
 WHERE 
-Row_ID IN (
-			SELECT Row_ID
-			FROM (
-					SELECT Row_ID, CONCAT(Country, Year),
-					ROW_NUMBER () OVER(PARTITION BY CONCAT(Country, Year) ORDER BY CONCAT(Country, Year)) AS row_num  
-					FROM world_life_expectancy_staging
-				) AS Row_table
-WHERE row_num > 1) 
-;
+Row_ID IN ( SELECT Row_ID
+	    FROM ( SELECT Row_ID, CONCAT(Country, Year),
+		ROW_NUMBER () OVER(PARTITION BY CONCAT(Country, Year) ORDER BY CONCAT(Country, Year)) AS row_num  
+		FROM world_life_expectancy_staging ) AS Row_table
+            WHERE row_num > 1) ;
 
-				-- Handling missing values	
+			-- Handling missing values	
 -- Select the blank rows from Status
 SELECT *
 FROM world_life_expectancy_staging
@@ -59,7 +55,7 @@ WHERE Status = '';
     
 SELECT DISTINCT(Status)
 FROM world_life_expectancy_staging
-WHERE Status <> '' ;   -- So, the Status can be 'Developing' or 'Developed'
+WHERE Status <> '' ;   ##  So, the Status can be 'Developing' or 'Developed'
 
 SELECT DISTINCT(Country)
 FROM world_life_expectancy_staging
@@ -153,7 +149,9 @@ SELECT *
 FROM world_life_expectancy_staging;
 
 
-				-- B.EXPLORATORY DATA ANALYSIS
+		
+
+			-- B.EXPLORATORY DATA ANALYSIS
 SELECT *
 FROM world_life_expectancy_staging;		
 
@@ -162,7 +160,8 @@ SELECT Year, ROUND(AVG(`Life expectancy`),2) AS average_life_expectancy
 FROM world_life_expectancy_staging
 WHERE `Life expectancy` <> 0
 GROUP BY Year
-ORDER BY Year;  ## Based on the trend observed, the average life expectancy increased over a 15 years period.
+ORDER BY Year;  
+	## Based on the trend observed, the average life expectancy increased over a 15 years period.
 
 -- How life expectancy increase over 15 years?
 SELECT Country, 
@@ -173,8 +172,9 @@ FROM world_life_expectancy_staging
 GROUP BY Country
 HAVING MIN(`Life expectancy`) <> 0
 AND MAX(`Life expectancy`) <> 0
-ORDER BY life_increase_15_years DESC;  ## When the minimum life expectancy is low, the potential for significant improvement is greater, leading to a larger increase over time. 
-                                       ## In contrast, when life expectancy is already high, gains tend to be smaller due to biological and medical limitations.
+ORDER BY life_increase_15_years DESC; 
+	## When the minimum life expectancy is low, the potential for significant improvement is greater, leading to a larger increase over time.
+	## In contrast, when life expectancy is already high, gains tend to be smaller due to biological and medical limitations.
 
 
 -- Life expectancy vs GDP
@@ -192,7 +192,7 @@ AVG(CASE WHEN gdp >= 1500 THEN `Life expectancy` ELSE NULL END) high_gdp_Life_ex
 SUM(CASE WHEN gdp <= 1500 THEN 1 ELSE 0  END) low_gdp_count,
 AVG(CASE WHEN gdp <= 1500 THEN `Life expectancy` ELSE NULL END) low_gdp_Life_expectancy
 FROM world_life_expectancy_staging;
-		## As we can observe, countries with a high GDP have a life expectancy approximately 10 years higher compared to those with a low GDP.
+	## As we can observe, countries with a high GDP have a life expectancy approximately 10 years higher compared to those with a low GDP.
 
 
 -- Corelation between status si life expectancy
@@ -204,7 +204,7 @@ GROUP BY Status;
 SELECT Status, COUNT(DISTINCT Country), ROUND(AVG(`Life expectancy`),1)
 FROM world_life_expectancy_staging
 GROUP BY Status;
-		## The group of developing countries is more than five times larger, meaning it includes states with highly diverse levels of economic development.
+	## The group of developing countries is more than five times larger, meaning it includes states with highly diverse levels of economic development.
         ## Some developed countries have small populations, but strong economies, which can increase the average life expectancy.
         
         
