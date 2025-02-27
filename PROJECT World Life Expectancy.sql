@@ -207,17 +207,6 @@ GROUP BY Status;
 	-- The group of developing countries is more than five times larger, meaning it includes states with highly diverse levels of economic development.
 	-- Some developed countries have small populations, but strong economies, which can increase the average life expectancy.
         
-        
--- Life expectancy vs BMI
-SELECT Country, ROUND(AVG(`Life expectancy`),1) AS life_exp, ROUND(AVG(BMI),1) AS BMI
-FROM world_life_expectancy_staging
-GROUP BY Country
-HAVING life_exp > 0
-AND BMI > 0
-ORDER BY BMI DESC ;  
-	-- Higher BMI categories (overweight and obese) are associated with increased risks of various health issues 
-	--  This anaysis shown that populations with higher average BMI tend to have lower life expectancies     
-        
 
 -- Life expectancy vs Schooling
 SELECT Country, ROUND(AVG(`Life expectancy`),1) AS life_exp, ROUND(AVG(`Schooling`),1) AS Schooling
