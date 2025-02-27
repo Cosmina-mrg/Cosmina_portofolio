@@ -1,4 +1,4 @@
-                                          ⚡ MYSQL Project WORLD LIFE EXPECTANCY
+                         ⚡ MYSQL Project WORLD LIFE EXPECTANCY
 
 
 - This project analyze the global life expectancy trends from 2007 to 2022 across different countries, 
